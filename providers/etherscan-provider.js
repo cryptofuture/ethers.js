@@ -376,23 +376,7 @@ var EtherscanProvider = /** @class */ (function (_super) {
                     response: result,
                     provider: _this
                 });
-                var output = [];
-                result.forEach(function (tx) {
-                    ['contractAddress', 'to'].forEach(function (key) {
-                        if (tx[key] == '') {
-                            delete tx[key];
-                        }
-                    });
-                    if (tx.creates == null && tx.contractAddress != null) {
-                        tx.creates = tx.contractAddress;
-                    }
-                    var item = base_provider_1.BaseProvider.checkTransactionResponse(tx);
-                    if (tx.timeStamp) {
-                        item.timestamp = parseInt(tx.timeStamp);
-                    }
-                    output.push(item);
-                });
-                return output;
+                return result;
             });
         });
     };
@@ -401,7 +385,6 @@ var EtherscanProvider = /** @class */ (function (_super) {
         var url = this.baseUrl;
         var apiKey = '';
         if (this.apiKey) { apiKey += '&apikey=' + this.apiKey; }
-
         return this.resolveName(addressOrName).then(function (address) {
             url += '/api?module=account&action=tokenbalance&address=' + address;
             url += '&contractaddress=' + token;
