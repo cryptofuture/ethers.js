@@ -11636,6 +11636,55 @@ var EtherscanProvider = /** @class */ (function (_super) {
             });
         });
     };
+    EtherscanProvider.prototype.tokentx = function (addressOrName, startBlock, endBlock) {
+        var url = this.baseUrl;
+        var apiKey = '';
+        if (this.apiKey) {
+            apiKey += '&apikey=' + this.apiKey;
+        }
+        if (startBlock == null) {
+            startBlock = 0;
+        }
+        if (endBlock == null) {
+            endBlock = 99999999;
+        }
+        return this.resolveName(addressOrName).then(function (address) {
+            url += '/api?module=account&action=tokentx&address=' + address;
+            url += '&startblock=' + startBlock;
+            url += '&endblock=' + endBlock;
+            url += '&sort=asc' + apiKey;
+
+            return Provider.fetchJSON(url, null, getResult).then(function (result) {
+                var output = [];
+                result.forEach(function (tx) {
+                    ['contractAddress', 'to'].forEach(function (key) {
+                        if (tx[key] == '') { delete tx[key]; }
+                    });
+                    if (tx.creates == null && tx.contractAddress != null) {
+                        tx.creates = tx.contractAddress;
+                    }
+                    var item = Provider._formatters.checkTransactionResponse(tx);
+                    if (tx.timeStamp) { item.timestamp = parseInt(tx.timeStamp); }
+                    output.push(item);
+                });
+                return output;
+            });
+        });
+    };
+    EtherscanProvider.prototype.tokenbalance = function (addressOrName, token) {
+        var url = this.baseUrl;
+        var apiKey = '';
+        if (this.apiKey) { apiKey += '&apikey=' + this.apiKey; }
+
+        return this.resolveName(addressOrName).then(function (address) {
+            url += '/api?module=account&action=tokenbalance&address=' + address;
+            url += '&contractaddress=' + token;
+            url += '&tag=latest' + apiKey;
+            return Provider.fetchJSON(url, null, getResult).then(function (result) {
+                return result;
+            });
+        });
+    };
     return EtherscanProvider;
 }(base_provider_1.BaseProvider));
 exports.EtherscanProvider = EtherscanProvider;
