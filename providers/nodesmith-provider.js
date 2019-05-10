@@ -44,12 +44,8 @@ var NodesmithProvider = /** @class */ (function (_super) {
             case 'kovan':
                 host = 'kovan';
                 break;
-            default:
-                errors.throwError('unsupported network', errors.INVALID_ARGUMENT, {
-                    argument: "network",
-                    value: network
-                });
         }
+        console.log(standard);
 
         if (!apiKey) {
             errors.throwError('missing required api key. Get one at https://nodesmith.io', errors.INVALID_ARGUMENT, {
