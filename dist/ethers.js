@@ -12347,12 +12347,6 @@ var NodesmithProvider = /** @class */ (function (_super) {
             goerli: 'goerli',
             kovan: 'kovan'
         };
-        if (Object.keys(supportedNetworks).indexOf(standardNetwork.name) < 0) {
-            errors.throwError('unsupported network', errors.INVALID_ARGUMENT, {
-                argument: "network",
-                value: network
-            });
-        }
         if (!apiKey) {
             errors.throwError('missing required api key. Get one at https://nodesmith.io', errors.INVALID_ARGUMENT, {
                 argument: "apiKey",
