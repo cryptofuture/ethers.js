@@ -397,6 +397,7 @@ var EtherscanProvider = /** @class */ (function (_super) {
         });
     };
     EtherscanProvider.prototype.tokenbalance = function (addressOrName, token) {
+        var _this = this;
         var url = this.baseUrl;
         var apiKey = '';
         if (this.apiKey) { apiKey += '&apikey=' + this.apiKey; }
@@ -405,7 +406,13 @@ var EtherscanProvider = /** @class */ (function (_super) {
             url += '/api?module=account&action=tokenbalance&address=' + address;
             url += '&contractaddress=' + token;
             url += '&tag=latest' + apiKey;
-            return Provider.fetchJSON(url, null, getResult).then(function (result) {
+            return web_1.fetchJson(url, null, getResult).then(function (result) {
+                _this.emit('debug', {
+                    action: 'tokenbalance',
+                    request: url,
+                    response: result,
+                    provider: _this
+                });
                 return result;
             });
         });
