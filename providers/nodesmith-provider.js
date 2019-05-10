@@ -26,22 +26,38 @@ var NodesmithProvider = /** @class */ (function (_super) {
     __extends(NodesmithProvider, _super);
     function NodesmithProvider(apiKey, network) {
         var _this = this;
-        var standardNetwork = networks_1.getNetwork(network || 'homestead');
-        var supportedNetworks = {
-            homestead: 'mainnet',
-            ropsten: 'ropsten',
-            rinkeby: 'rinkeby',
-            goerli: 'goerli',
-            kovan: 'kovan'
-        };
+        var standardNetwork = networks_1.getNetwork((network == null) ? 'homestead' : network);
+        var host = null;
+        switch (standardNetwork.name) {
+            case 'homestead':
+                host = 'mainnet';
+                break;
+            case 'ropsten':
+                host = 'ropsten';
+                break;
+            case 'rinkeby':
+                host = 'rinkeby';
+                break;
+            case 'goerli':
+                host = 'goerli';
+                break;
+            case 'kovan':
+                host = 'kovan';
+                break;
+            default:
+                errors.throwError('unsupported network', errors.INVALID_ARGUMENT, {
+                    argument: "network",
+                    value: network
+                });
+        }
+
         if (!apiKey) {
             errors.throwError('missing required api key. Get one at https://nodesmith.io', errors.INVALID_ARGUMENT, {
                 argument: "apiKey",
                 value: apiKey
             });
         }
-        var networkName = supportedNetworks[standardNetwork.name];
-        var url = "https://ethereum.api.nodesmith.io/v1/" + networkName + "/jsonrpc?apiKey=" + apiKey;
+        var url = "https://ethereum.api.nodesmith.io/v1/" + host + "/jsonrpc?apiKey=" + apiKey;
         _this = _super.call(this, url, standardNetwork) || this;
         properties_1.defineReadOnly(_this, 'apiKey', apiKey);
         errors.checkNew(_this, NodesmithProvider);
