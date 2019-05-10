@@ -12334,40 +12334,33 @@ var json_rpc_provider_1 = require("./json-rpc-provider");
 var networks_1 = require("../utils/networks");
 var properties_1 = require("../utils/properties");
 var errors = __importStar(require("../errors"));
-// Provider for connecting to Nodesmith's hosted JSON RPC endpoints
 var NodesmithProvider = /** @class */ (function (_super) {
     __extends(NodesmithProvider, _super);
-    function NodesmithProvider(apiKey, network) {
+    function NodesmithProvider(network, apiKey) {
         var _this = this;
-        var standard = networks_1.getNetwork((network == null) ? 'homestead' : network);
-        var host = null;
-        switch (standard) {
-            case 'homestead':
-                host = 'mainnet';
-                break;
-            case 'ropsten':
-                host = 'ropsten';
-                break;
-            case 'rinkeby':
-                host = 'rinkeby';
-                break;
-            case 'goerli':
-                host = 'goerli';
-                break;
-            case 'kovan':
-                host = 'kovan';
-                break;
+        var standardNetwork = networks_1.getNetwork(network || 'homestead');
+        var supportedNetworks = {
+            homestead: 'mainnet',
+            ropsten: 'ropsten',
+            rinkeby: 'rinkeby',
+            goerli: 'goerli',
+            kovan: 'kovan'
+        };
+        if (Object.keys(supportedNetworks).indexOf(standardNetwork.name) < 0) {
+            errors.throwError('unsupported network', errors.INVALID_ARGUMENT, {
+                argument: "network",
+                value: network
+            });
         }
-        console.log(standard);
-
         if (!apiKey) {
             errors.throwError('missing required api key. Get one at https://nodesmith.io', errors.INVALID_ARGUMENT, {
                 argument: "apiKey",
                 value: apiKey
             });
         }
-        var url = "https://ethereum.api.nodesmith.io/v1/" + host + "/jsonrpc?apiKey=" + apiKey;
-        _this = _super.call(this, url, standard) || this;
+        var networkName = supportedNetworks[standardNetwork.name];
+        var url = "https://ethereum.api.nodesmith.io/v1/" + networkName + "/jsonrpc?apiKey=" + apiKey;
+        _this = _super.call(this, url, standardNetwork) || this;
         properties_1.defineReadOnly(_this, 'apiKey', apiKey);
         errors.checkNew(_this, NodesmithProvider);
         return _this;
@@ -12378,10 +12371,12 @@ var NodesmithProvider = /** @class */ (function (_super) {
     NodesmithProvider.prototype.getSigner = function (address) {
         return errors.throwError('NODESMITH does not support signing', errors.UNSUPPORTED_OPERATION, { operation: 'getSigner' });
     };
+    NodesmithProvider.prototype.listAccounts = function () {
+        return Promise.resolve([]);
+    };
     return NodesmithProvider;
 }(json_rpc_provider_1.JsonRpcProvider));
 exports.NodesmithProvider = NodesmithProvider;
-
 },{"../errors":5,"../utils/networks":72,"../utils/properties":74,"./json-rpc-provider":56}],58:[function(require,module,exports){
 'use strict';
 var __extends = (this && this.__extends) || (function () {
