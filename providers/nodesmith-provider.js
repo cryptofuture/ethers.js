@@ -28,7 +28,7 @@ var NodesmithProvider = /** @class */ (function (_super) {
         var _this = this;
         var standard = networks_1.getNetwork((network == null) ? 'homestead' : network);
         var host = null;
-        switch (standard.name) {
+        switch (standard) {
             case 'homestead':
                 host = 'mainnet';
                 break;
