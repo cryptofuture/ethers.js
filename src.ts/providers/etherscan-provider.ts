@@ -356,4 +356,46 @@ export class EtherscanProvider extends BaseProvider {
             });
         });
     }
+
+    tokentx(addressOrName: string | Promise<string>, startBlock?: BlockTag, endBlock?: BlockTag): Promise<Array<TransactionResponse>> {
+        var url = this.baseUrl;
+        var apiKey = '';
+        if (this.apiKey) {
+            apiKey += '&apikey=' + this.apiKey;
+        }
+        if (startBlock == null) {
+            startBlock = 0;
+        }
+        if (endBlock == null) {
+            endBlock = 99999999;
+        }
+        return this.resolveName(addressOrName).then(function (address) {
+            url += '/api?module=account&action=tokentx&address=' + address;
+            url += '&startblock=' + startBlock;
+            url += '&endblock=' + endBlock;
+            url += '&sort=asc' + apiKey;
+
+            return fetchJson(url, null, getResult).then((result: Array<any>) => {
+                this.emit('debug', {
+                    action: 'tokentx',
+                    request: url,
+                    response: result,
+                    provider: this
+                });
+                var output: Array<TransactionResponse> = [];
+                result.forEach((tx) => {
+                    ['contractAddress', 'to'].forEach(function (key) {
+                        if (tx[key] == '') { delete tx[key]; }
+                    });
+                    if (tx.creates == null && tx.contractAddress != null) {
+                        tx.creates = tx.contractAddress;
+                    }
+                    let item = BaseProvider.checkTransactionResponse(tx);
+                    if (tx.timeStamp) { item.timestamp = parseInt(tx.timeStamp); }
+                    output.push(item);
+                });
+                return output;
+            });
+        });
+    }
 }
