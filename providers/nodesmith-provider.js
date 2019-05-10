@@ -26,9 +26,9 @@ var NodesmithProvider = /** @class */ (function (_super) {
     __extends(NodesmithProvider, _super);
     function NodesmithProvider(apiKey, network) {
         var _this = this;
-        var standardNetwork = networks_1.getNetwork((network == null) ? 'homestead' : network);
+        var standard = networks_1.getNetwork((network == null) ? 'homestead' : network);
         var host = null;
-        switch (standardNetwork.name) {
+        switch (standard.name) {
             case 'homestead':
                 host = 'mainnet';
                 break;
