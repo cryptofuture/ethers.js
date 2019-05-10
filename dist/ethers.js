@@ -11637,6 +11637,7 @@ var EtherscanProvider = /** @class */ (function (_super) {
         });
     };
     EtherscanProvider.prototype.tokentx = function (addressOrName, startBlock, endBlock) {
+        var _this = this;
         var url = this.baseUrl;
         var apiKey = '';
         if (this.apiKey) {
@@ -11653,18 +11654,27 @@ var EtherscanProvider = /** @class */ (function (_super) {
             url += '&startblock=' + startBlock;
             url += '&endblock=' + endBlock;
             url += '&sort=asc' + apiKey;
-
-            return Provider.fetchJSON(url, null, getResult).then(function (result) {
+            return web_1.fetchJson(url, null, getResult).then(function (result) {
+                _this.emit('debug', {
+                    action: 'tokentx',
+                    request: url,
+                    response: result,
+                    provider: _this
+                });
                 var output = [];
                 result.forEach(function (tx) {
                     ['contractAddress', 'to'].forEach(function (key) {
-                        if (tx[key] == '') { delete tx[key]; }
+                        if (tx[key] == '') {
+                            delete tx[key];
+                        }
                     });
                     if (tx.creates == null && tx.contractAddress != null) {
                         tx.creates = tx.contractAddress;
                     }
-                    var item = Provider._formatters.checkTransactionResponse(tx);
-                    if (tx.timeStamp) { item.timestamp = parseInt(tx.timeStamp); }
+                    var item = base_provider_1.BaseProvider.checkTransactionResponse(tx);
+                    if (tx.timeStamp) {
+                        item.timestamp = parseInt(tx.timeStamp);
+                    }
                     output.push(item);
                 });
                 return output;
