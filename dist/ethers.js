@@ -12371,7 +12371,7 @@ var NodesmithProvider = /** @class */ (function (_super) {
             });
         }
         var url = "https://ethereum.api.nodesmith.io/v1/" + host + "/jsonrpc?apiKey=" + apiKey;
-        _this = _super.call(this, url, standardNetwork) || this;
+        _this = _super.call(this, url, standard) || this;
         properties_1.defineReadOnly(_this, 'apiKey', apiKey);
         errors.checkNew(_this, NodesmithProvider);
         return _this;
